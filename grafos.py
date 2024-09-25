@@ -5,10 +5,10 @@ from scipy.sparse import lil_matrix
 from collections import deque
 
 class Grafo:
-    def __init__(self):
+    def __init__(self, arquivo):
         self.arestas = tuple()
         self.vertices = 0
-        with open("grafo_1.txt", "r") as f:
+        with open(arquivo, "r") as f:
             self.vertices = int(f.readline())
             self.arestas = (x.strip() for x in f.readlines())
         self.matriz = []
@@ -392,7 +392,7 @@ class Grafo:
             f.write(str(self.grau_medio()) + '\n')
             f.write(str(self.mediana_de_grau()) + '\n')
 
-g = Grafo()
+g = Grafo("grafo_1.txt")
 
 # g.matriz_adjacencia() ou
 # g.lista_adjacencia()
