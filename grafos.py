@@ -394,14 +394,5 @@ class Grafo:
 
 g = Grafo()
 
-g.matriz_adjacencia()
-
-print("foi")
-
-t1 = time.perf_counter()
-
-g.dfs(1)
-
-print(time.perf_counter() - t1)
-
-time.sleep(15)
+# g.matriz_adjacencia() ou
+# g.lista_adjacencia()
