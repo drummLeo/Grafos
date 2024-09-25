@@ -77,13 +77,11 @@ class Grafo:
             graus = sorted([sum(vertice) for vertice in self.matriz])
             return graus[len(graus)//2]
 
-    def bfs(self, vertice_inicial, arquivo_saida=None, grafo=None,):
+    def bfs(self, vertice_inicial, arquivo_saida=None):
         vertice_inicial -= 1
         if vertice_inicial < 0 or vertice_inicial >= self.vertices:
             raise KeyError("Vértice não encontrado")
         if self.adjacencia:
-            if grafo is None:
-                grafo = self.adjacencia
             # Dicionários para armazenar o pai e o nível de cada vértice
             pai = {}
             nivel = {}
@@ -100,14 +98,12 @@ class Grafo:
                 vertice = fila.popleft()
 
                 # Iterando sobre os vizinhos do vértice atual
-                for vizinho in grafo[vertice]:
+                for vizinho in self.adjacencia[vertice]:
                     if vizinho not in nivel:  # Se o vizinho não foi visitado
                         fila.append(vizinho)
                         pai[vizinho] = vertice
                         nivel[vizinho] = nivel[vertice] + 1
         else:
-            if grafo is None:
-                grafo = self.matriz
 
             # Dicionários para armazenar o pai e o nível de cada vértice
             pai = {}
@@ -128,7 +124,7 @@ class Grafo:
 
                 # Iterando sobre os vizinhos do vértice atual (checa a matriz de adjacência)
                 for vizinho in vizinhos:
-                    if grafo[vertice, vizinho] == 1 and vizinho not in nivel:
+                    if vizinho not in nivel:
                         fila.append(vizinho)
                         pai[vizinho] = vertice
                         nivel[vizinho] = nivel[vertice] + 1
@@ -146,13 +142,11 @@ class Grafo:
 
         return [(vertice, pai[vertice], nivel[vertice]) for vertice in nivel if nivel]
 
-    def dfs(self, vertice_inicial, arquivo_saida=None, grafo=None):
+    def dfs(self, vertice_inicial, arquivo_saida=None):
         vertice_inicial -= 1
         if vertice_inicial < 0 or vertice_inicial >= self.vertices:
             raise KeyError("Vértice não encontrado")
         if self.adjacencia:
-            if grafo is None:
-                grafo = self.adjacencia
             # Dicionários para armazenar o pai e o nível de cada vértice
             pai = {}
             nivel = {}
@@ -167,7 +161,7 @@ class Grafo:
                 vertice, nivel_atual = pilha.pop()
 
                 # Verifica os vizinhos do vértice (na lista de adjacência)
-                for vizinho in grafo.get(vertice, []):
+                for vizinho in self.adjacencia.get(vertice, []):
                     if vizinho not in nivel:
                         # Marcar o pai e o nível do vizinho
                         pai[vizinho] = vertice
@@ -175,8 +169,8 @@ class Grafo:
                         # Adiciona o vizinho na pilha
                         pilha.append((vizinho, nivel_atual + 1))
         else:
-            if grafo is None:
-                grafo = self.matriz
+            #if grafo is None:
+             #   grafo = self.matriz
 
             # Dicionários para armazenar o pai e o nível de cada vértice
             pai = {}
@@ -194,7 +188,7 @@ class Grafo:
 
                 # Verifica os vizinhos do vértice (na matriz de adjacência)
                 for vizinho in vizinhos:
-                    if grafo[vertice, vizinho] == 1 and vizinho not in nivel:
+                    if vizinho not in nivel:
                         # Marcar o pai e o nível do vizinho
                         pai[vizinho] = vertice
                         nivel[vizinho] = nivel_atual + 1
@@ -209,7 +203,7 @@ class Grafo:
                 for vertice in nivel:
                     f.write(f"{vertice+1}, {pai[vertice]+1 if pai[vertice] is not None else None}, {nivel[vertice]}\n")
                     if vertice + 1 in (10, 20, 30):
-                        print(f"{vertice + 1}, {pai[vertice] + 1 if pai[vertice] is not None else None}, {nivel[vertice]}\n")
+                        print(f"{vertice + 1}, {pai[vertice]+1 if pai[vertice] is not None else None}, {nivel[vertice]}\n")
 
     def bfs_distancia(self, vertice_inicial):
             if self.adjacencia:
@@ -392,7 +386,15 @@ class Grafo:
 
 
 if __name__ == '__main__':
-    g = Grafo("grafo_1.txt")
-    
-    # g.matriz_adjacencia() ou
-    # g.lista_adjacencia()
+    g = Grafo("grafo_6.txt")
+
+    g.matriz_adjacencia()
+    print("foi")
+    #g.lista_adjacencia()
+
+    t1 = time.perf_counter()
+    g.dfs(1)
+    #for i in range(100):
+    #    g.dfs(i+1)
+    t2 = time.perf_counter()
+    print(t2 - t1)
