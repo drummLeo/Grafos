@@ -32,9 +32,7 @@ class Grafo:
     def lista_adjacencia(self):
         self.adjacencia = {i: [] for i in range(self.vertices)}
         for aresta in self.arestas:
-            s = aresta.split()
-            u = int(s[0])
-            v = int(s[1])
+            u, v = map(int, aresta.split())
             self.adjacencia[u - 1].append(v - 1)
             self.adjacencia[v - 1].append(u - 1)
 
@@ -392,7 +390,9 @@ class Grafo:
             f.write(str(self.grau_medio()) + '\n')
             f.write(str(self.mediana_de_grau()) + '\n')
 
-g = Grafo("grafo_1.txt")
 
-# g.matriz_adjacencia() ou
-# g.lista_adjacencia()
+if __name__ == '__main__':
+    g = Grafo("grafo_1.txt")
+    
+    # g.matriz_adjacencia() ou
+    # g.lista_adjacencia()
