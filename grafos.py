@@ -1,5 +1,3 @@
-import time
-
 from scipy.sparse import lil_matrix
 
 from collections import deque
@@ -334,7 +332,7 @@ class Grafo:
                 vizinhos = self.matriz[vertice].indices
 
                 for vizinho in vizinhos:
-                    if self.matriz[vertice, vizinho] == 1 and vizinho not in visitados:
+                    if vizinho not in visitados:
                         visitados.add(vizinho)
                         fila.append(vizinho)
 
@@ -357,10 +355,9 @@ class Grafo:
         elif self.matriz:
             visitados = set()  # Conjunto de vértices já visitados
             componentes = []  # Lista de componentes conexas
-            n = len(self.matriz)  # Número de vértices
 
             # Explora cada vértice do grafo
-            for vertice in range(n):
+            for vertice in range(self.vertices):
                 if vertice not in visitados:
                     componente = self.bfs_componente(vertice, visitados)
                     componentes.append(componente)
@@ -383,18 +380,3 @@ class Grafo:
             f.write(str(self.grau_maximo()) + '\n')
             f.write(str(self.grau_medio()) + '\n')
             f.write(str(self.mediana_de_grau()) + '\n')
-
-
-if __name__ == '__main__':
-    g = Grafo("grafo_6.txt")
-
-    g.matriz_adjacencia()
-    print("foi")
-    #g.lista_adjacencia()
-
-    t1 = time.perf_counter()
-    g.dfs(1)
-    #for i in range(100):
-    #    g.dfs(i+1)
-    t2 = time.perf_counter()
-    print(t2 - t1)
