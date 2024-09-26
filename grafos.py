@@ -135,10 +135,7 @@ class Grafo:
                 for vertice in nivel:
                     f.write(f"{vertice+1}, {pai[vertice]+1 if pai[vertice] is not None else None}, {nivel[vertice]}\n")
 
-                    #if vertice+1 in (10, 20, 30):
-                     #   print(f"{vertice+1}, {pai[vertice]+1 if pai[vertice] is not None else None}, {nivel[vertice]}\n")
-
-        return [(vertice, pai[vertice], nivel[vertice]) for vertice in nivel if nivel]
+        return [(vertice+1, pai[vertice]+1 if pai[vertice] is not None else None, nivel[vertice]) for vertice in nivel if nivel]
 
     def dfs(self, vertice_inicial, arquivo_saida=None):
         vertice_inicial -= 1
@@ -167,9 +164,6 @@ class Grafo:
                         # Adiciona o vizinho na pilha
                         pilha.append((vizinho, nivel_atual + 1))
         else:
-            #if grafo is None:
-             #   grafo = self.matriz
-
             # Dicionários para armazenar o pai e o nível de cada vértice
             pai = {}
             nivel = {}
@@ -365,11 +359,6 @@ class Grafo:
             # Ordena as componentes por tamanho (ordem decrescente)
             componentes.sort(key=len, reverse=True)
 
-        with open("componentes.txt", "w") as f:
-            f.write(f"Número de componentes conexas: {len(componentes)}\n")
-            for i, componente in enumerate(componentes):
-                f.write(f"Componente {i + 1}: Tamanho {len(componente)} - Vértices: {componente}\n")
-
         return componentes
 
     def gerar_texto(self):
@@ -380,3 +369,4 @@ class Grafo:
             f.write(str(self.grau_maximo()) + '\n')
             f.write(str(self.grau_medio()) + '\n')
             f.write(str(self.mediana_de_grau()) + '\n')
+
