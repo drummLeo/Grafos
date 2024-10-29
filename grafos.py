@@ -2,30 +2,31 @@ from scipy.sparse import lil_matrix
 
 from collections import deque
 
+
 class Grafo:
     def __init__(self, arquivo):
         self.arestas = tuple()
         self.vertices = 0
-        with open(arquivo, "r") as f:
-            self.vertices = int(f.readline())
-            self.arestas = (x.strip() for x in f.readlines())
+        if arquivo is not None:
+            with open(arquivo, "r") as f:
+                self.vertices = int(f.readline())
+                self.arestas = (x.strip() for x in f.readlines())
         self.matriz = []
         self.adjacencia = {}
 
     def matriz_adjacencia(self):
         # Usamos lil_matrix, pois é eficiente para a construção da matriz
         self.matriz = lil_matrix((self.vertices, self.vertices), dtype=bool)
-        
+
         for aresta in self.arestas:
             v1, v2 = map(int, aresta.split())
             # Ajuste dos índices (se necessário)
             self.matriz[v1 - 1, v2 - 1] = 1
             self.matriz[v2 - 1, v1 - 1] = 1
 
-    # Opcionalmente, podemos converter para csr_matrix após a construção, 
-    # que é mais eficiente para operações e armazenamento
+        # Opcionalmente, podemos converter para csr_matrix após a construção,
+        # que é mais eficiente para operações e armazenamento
         self.matriz = self.matriz.tocsr()
-
 
     def lista_adjacencia(self):
         self.adjacencia = {i: [] for i in range(self.vertices)}
@@ -70,10 +71,10 @@ class Grafo:
     def mediana_de_grau(self):
         if self.adjacencia:
             graus = sorted([len(self.adjacencia[vertice]) for vertice in self.adjacencia])
-            return graus[len(graus)//2]
+            return graus[len(graus) // 2]
         if self.matriz:
             graus = sorted([sum(vertice) for vertice in self.matriz])
-            return graus[len(graus)//2]
+            return graus[len(graus) // 2]
 
     def bfs(self, vertice_inicial, arquivo_saida=None):
         vertice_inicial -= 1
@@ -130,12 +131,14 @@ class Grafo:
         if arquivo_saida is not None:
             # Escrevendo o resultado no arquivo de saída
             with open(arquivo_saida, 'w') as f:
-                f.write(f"Vértice inicial: {vertice_inicial+1}\n")
+                f.write(f"Vértice inicial: {vertice_inicial + 1}\n")
                 f.write("Vértice, Pai, Nível\n")
                 for vertice in nivel:
-                    f.write(f"{vertice+1}, {pai[vertice]+1 if pai[vertice] is not None else None}, {nivel[vertice]}\n")
+                    f.write(
+                        f"{vertice + 1}, {pai[vertice] + 1 if pai[vertice] is not None else None}, {nivel[vertice]}\n")
 
-        return [(vertice+1, pai[vertice]+1 if pai[vertice] is not None else None, nivel[vertice]) for vertice in nivel if nivel]
+        return [(vertice + 1, pai[vertice] + 1 if pai[vertice] is not None else None, nivel[vertice]) for vertice in
+                nivel if nivel]
 
     def dfs(self, vertice_inicial, arquivo_saida=None):
         vertice_inicial -= 1
@@ -193,47 +196,49 @@ class Grafo:
                 f.write(f"Vértice inicial: {vertice_inicial}\n")
                 f.write("Vértice, Pai, Nível\n")
                 for vertice in nivel:
-                    f.write(f"{vertice+1}, {pai[vertice]+1 if pai[vertice] is not None else None}, {nivel[vertice]}\n")
+                    f.write(
+                        f"{vertice + 1}, {pai[vertice] + 1 if pai[vertice] is not None else None}, {nivel[vertice]}\n")
                     if vertice + 1 in (10, 20, 30):
-                        print(f"{vertice + 1}, {pai[vertice]+1 if pai[vertice] is not None else None}, {nivel[vertice]}\n")
+                        print(
+                            f"{vertice + 1}, {pai[vertice] + 1 if pai[vertice] is not None else None}, {nivel[vertice]}\n")
 
     def bfs_distancia(self, vertice_inicial):
-            if self.adjacencia:
-                # Dicionário para armazenar a distância do vértice inicial até os outros
-                distancias = {vertice_inicial: 0}
+        if self.adjacencia:
+            # Dicionário para armazenar a distância do vértice inicial até os outros
+            distancias = {vertice_inicial: 0}
 
-                # Fila para o BFS
-                fila = deque([vertice_inicial])
+            # Fila para o BFS
+            fila = deque([vertice_inicial])
 
-                # Executa o BFS
-                while fila:
-                    vertice = fila.popleft()
+            # Executa o BFS
+            while fila:
+                vertice = fila.popleft()
 
-                    # Para cada vizinho do vértice
-                    for vizinho in self.adjacencia.get(vertice, []):
-                        if vizinho not in distancias:
-                            distancias[vizinho] = distancias[vertice] + 1
-                            fila.append(vizinho)
-            elif self.matriz:
-                n = len(self.matriz)  # Número de vértices no grafo
-                distancias = [-1] * n  # Inicializa as distâncias como -1 (não visitado)
-                distancias[vertice_inicial] = 0  # Distância do vértice inicial para ele mesmo é 0
+                # Para cada vizinho do vértice
+                for vizinho in self.adjacencia.get(vertice, []):
+                    if vizinho not in distancias:
+                        distancias[vizinho] = distancias[vertice] + 1
+                        fila.append(vizinho)
+        elif self.matriz:
+            n = len(self.matriz)  # Número de vértices no grafo
+            distancias = [-1] * n  # Inicializa as distâncias como -1 (não visitado)
+            distancias[vertice_inicial] = 0  # Distância do vértice inicial para ele mesmo é 0
 
-                # Fila para o BFS
-                fila = deque([vertice_inicial])
+            # Fila para o BFS
+            fila = deque([vertice_inicial])
 
-                # Executa o BFS
-                while fila:
-                    vertice = fila.popleft()
-                    vizinhos = self.matriz[vertice].indices
+            # Executa o BFS
+            while fila:
+                vertice = fila.popleft()
+                vizinhos = self.matriz[vertice].indices
 
-                    # Para cada vizinho do vértice (usando a matriz de adjacência)
-                    for vizinho in vizinhos:
-                        if self.matriz[vertice, vizinho] == 1 and distancias[vizinho] == -1:  # Não visitado
-                            distancias[vizinho] = distancias[vertice] + 1
-                            fila.append(vizinho)
+                # Para cada vizinho do vértice (usando a matriz de adjacência)
+                for vizinho in vizinhos:
+                    if self.matriz[vertice, vizinho] == 1 and distancias[vizinho] == -1:  # Não visitado
+                        distancias[vizinho] = distancias[vertice] + 1
+                        fila.append(vizinho)
 
-            return distancias
+        return distancias
 
     def distancia(self, v1, v2):
         v1 -= 1
@@ -242,7 +247,8 @@ class Grafo:
         distancias = self.bfs_distancia(v1)
 
         # Retorna a distância do vértice u até o vértice v (se existir caminho)
-        return distancias.get(v2, float('inf')) if self.adjacencia else (distancias[v2] if distancias[v2] != -1 else float('inf'))  # Se v não for acessível, retorna infinito
+        return distancias.get(v2, float('inf')) if self.adjacencia else (
+            distancias[v2] if distancias[v2] != -1 else float('inf'))  # Se v não for acessível, retorna infinito
 
     def bfs_diametro(self, start):
         visitados = {start: 0}
@@ -308,7 +314,7 @@ class Grafo:
 
             while fila:
                 vertice = fila.popleft()
-                componente.append(vertice+1)
+                componente.append(vertice + 1)
 
                 for vizinho in self.adjacencia.get(vertice, []):
                     if vizinho not in visitados:
@@ -321,7 +327,7 @@ class Grafo:
 
             while fila:
                 vertice = fila.popleft()
-                componente.append(vertice+1)
+                componente.append(vertice + 1)
 
                 vizinhos = self.matriz[vertice].indices
 
@@ -369,4 +375,3 @@ class Grafo:
             f.write(str(self.grau_maximo()) + '\n')
             f.write(str(self.grau_medio()) + '\n')
             f.write(str(self.mediana_de_grau()) + '\n')
-
