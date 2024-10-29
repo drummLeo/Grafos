@@ -1,7 +1,7 @@
 from grafos_com_pesos import GrafoComPesos
 
 k = 10
-for i in range(1, 2):
+for i in range(1, 6):
     g = GrafoComPesos(f"grafo_W_{i}.txt")
     g.lista_adjacencia()
 
