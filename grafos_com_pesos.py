@@ -96,7 +96,7 @@ class GrafoComPesos(Grafo):
         return tempo_medio_vetor, tempo_medio_heap
 
     def calcular_distancias_entre_pesquisadores(self, inicio, fim):
-        with open("textos/rede_colaboracao_vertices.txt", encoding="utf-8") as f:
+        with open("rede_colaboracao_vertices.txt", encoding="utf-8") as f:
             mapa_pesquisadores = {x.split(',')[1].strip(): int(x.split(',')[0]) for x in f.readlines()}
         inicio_idx = mapa_pesquisadores.get(inicio)
         fim_idx = mapa_pesquisadores.get(fim)
