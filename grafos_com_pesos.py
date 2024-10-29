@@ -96,7 +96,7 @@ class GrafoComPesos(Grafo):
 
     def calcular_distancias_entre_pesquisadores(self, inicio, fim):
         mapa_pesquisadores = {
-            "Edsger W. Dijkstra": 2722,  # Ajuste o índice conforme necessário
+            "Edsger W. Dijkstra": 2722,
             "Alan M. Turing": 11365,
             "J. B. Kruskal": 471365,
             "Jon M. Kleinberg": 5709,
