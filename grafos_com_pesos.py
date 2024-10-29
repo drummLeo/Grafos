@@ -1,15 +1,34 @@
 from heapq import heappop, heappush
+from collections import deque, defaultdict
 import time
+
 from grafos import *
 
 class GrafoComPesos(Grafo):
     def __init__(self, arquivo):
-        super().__init__(arquivo="")
+        super().__init__(None)
+        self.arestas = []
+        self.vertices = 0
         with open(arquivo, "r") as f:
             self.vertices = int(f.readline())
             for linha in f:
+                if '-' in linha:
+                    print("Não implementamos grafos com pesos negativos ainda.")
                 v1, v2, peso = linha.split()
-                self.arestas.append((int(v1)-1, int(v2)-1, float(peso)))
+                self.arestas.append((int(v1) - 1, int(v2) - 1, float(peso)))
+
+    def matriz_adjacencia(self):
+        self.matriz = lil_matrix((self.vertices, self.vertices), dtype=float)
+        for v1, v2, peso in self.arestas:
+            self.matriz[v1, v2] = peso
+            self.matriz[v2, v1] = peso
+        self.matriz = self.matriz.tocsr()
+
+    def lista_adjacencia(self):
+        self.adjacencia = defaultdict(list)
+        for u, v, peso in self.arestas:
+            self.adjacencia[u].append((v, peso))
+            self.adjacencia[v].append((u, peso))
 
     def dijkstra_vetor(self, inicio):
         inicio -= 1
@@ -32,14 +51,6 @@ class GrafoComPesos(Grafo):
                     pais[vizinho] = u
         return distancias, pais
 
-    def obter_caminho(self, pais, destino):
-        caminho = []
-        atual = destino - 1
-        while atual is not None:
-            caminho.append(atual+1)
-            atual = pais[atual]
-        return caminho[::-1]  # Inverte para obter o caminho do início ao destino
-
     def dijkstra_heap(self, inicio):
         inicio -= 1
         distancias = [float('inf')] * self.vertices
@@ -56,6 +67,14 @@ class GrafoComPesos(Grafo):
                     heappush(heap, (distancias[vizinho], vizinho))
                     pais[vizinho] = u
         return distancias, pais
+
+    def obter_caminho(self, pais, destino):
+        caminho = []
+        atual = destino - 1
+        while atual is not None:
+            caminho.append(atual+1)
+            atual = pais[atual]
+        return caminho[::-1]
 
     def tempo_medio_dijkstra(self, k=100):
         import random
