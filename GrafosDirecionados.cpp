@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <queue>
 #include <chrono>
-#include <iomanip> // Para configurar precisão da saída
+#include <iomanip>
 #include <limits>
 
 
@@ -16,7 +16,7 @@ private:
     struct Aresta {
         int destino;
         double capacidade;
-        bool original; // true para aresta original, false para reversa
+        bool original;
     };
 
     int numVertices;
@@ -27,14 +27,13 @@ public:
 
     void adicionarAresta(int origem, int destino, double capacidade) {
         grafoResidual[origem].push_back({destino, capacidade, true});
-        grafoResidual[destino].push_back({origem, 0, false}); // Aresta reversa com capacidade 0
+        grafoResidual[destino].push_back({origem, 0, false});
     }
 
     double fluxoMaximo(int origem, int destino) {
         double fluxoTotal = 0;
 
         while (true) {
-            // Busca em largura para encontrar um caminho aumentante
             vector<int> parent(numVertices, -1);
             queue<pair<int, double>> fila;
             fila.push(make_pair(origem, numeric_limits<double>::max()));
@@ -52,7 +51,6 @@ public:
                         if (aresta.destino == destino) {
                             fluxoTotal += novoFluxo;
 
-                            // Atualizar as capacidades no grafo residual
                             int cur = destino;
                             while (cur != origem) {
                                 int prev = parent[cur];
@@ -70,14 +68,14 @@ public:
                                 }
                                 cur = prev;
                             }
-                            goto next_iteration; // Caminho encontrado, continuar o loop
+                            goto next_iteration; 
                         }
 
                         fila.push({aresta.destino, novoFluxo});
                     }
                 }
             }
-            break; // Se não encontrou caminho, fim do algoritmo
+            break;
 
         next_iteration:;
         }
@@ -85,7 +83,6 @@ public:
         return fluxoTotal;
     }
 
-    // Lê um grafo de um arquivo
     static GrafoDirecionadoComPesos lerDeArquivo(const string& nomeArquivo) {
         ifstream arquivo(nomeArquivo);
         if (!arquivo.is_open()) {
@@ -94,7 +91,7 @@ public:
         }
 
         string linha;
-        getline(arquivo, linha); // Número de vértices
+        getline(arquivo, linha); 
         int numVertices = stoi(linha);
 
         GrafoDirecionadoComPesos grafo(numVertices);
@@ -104,7 +101,7 @@ public:
             int origem, destino;
             double capacidade;
             ss >> origem >> destino >> capacidade;
-            grafo.adicionarAresta(origem - 1, destino - 1, capacidade); // Índices ajustados para 0
+            grafo.adicionarAresta(origem - 1, destino - 1, capacidade);
         }
 
         arquivo.close();
@@ -115,18 +112,14 @@ public:
 int main() {
     string caminhoArquivo = "grafo_rf_6.txt";
 
-    // Lê o grafo do arquivo
     GrafoDirecionadoComPesos grafo = GrafoDirecionadoComPesos::lerDeArquivo(caminhoArquivo);
 
-    // Cálculo do fluxo máximo e medição do tempo
     auto inicio = chrono::high_resolution_clock::now();
-    double fluxoMax = grafo.fluxoMaximo(0, 1); // Considerando vértices 1 e 2 como origem e destino
+    double fluxoMax = grafo.fluxoMaximo(0, 1); 
     auto fim = chrono::high_resolution_clock::now();
 
-    // Tempo de execução
     chrono::duration<double> duracao = fim - inicio;
 
-    // Resultados
     cout << "Fluxo máximo: " << fluxoMax << endl;
     cout << fixed << setprecision(9) << "Tempo de execução: " << duracao.count() << " segundos" << endl;
 
